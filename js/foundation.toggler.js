@@ -27,7 +27,7 @@ class Toggler extends Plugin {
     this.className = 'Toggler'; // ie9 back compat
 
     // Triggers init is idempotent, just need to make sure it is initialized
-    Triggers.init($);
+    Triggers.init($, undefined, this.options.rootNode);
 
     this._init();
     this._events();
@@ -41,7 +41,7 @@ class Toggler extends Plugin {
   _init() {
     // Collect triggers to set ARIA attributes to
     var id = this.$element[0].id,
-      $triggers = $(`[data-open~="${id}"], [data-close~="${id}"], [data-toggle~="${id}"]`);
+      $triggers = $(`[data-open~="${id}"], [data-close~="${id}"], [data-toggle~="${id}"]`, this.options.rootNode);
 
     var input;
     // Parse animation classes if they were set
@@ -140,7 +140,7 @@ class Toggler extends Plugin {
 
   _updateARIA(isOn) {
     var id = this.$element[0].id;
-    $(`[data-open="${id}"], [data-close="${id}"], [data-toggle="${id}"]`)
+    $(`[data-open="${id}"], [data-close="${id}"], [data-toggle="${id}"]`, this.options.rootNode)
       .attr({
         'aria-expanded': isOn ? true : false
       });

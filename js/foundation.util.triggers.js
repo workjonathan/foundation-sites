@@ -12,9 +12,9 @@ const MutationObserver = (function () {
   return false;
 })();
 
-const triggers = (el, type) => {
+const triggers = (el, type, rootNode) => {
   el.data(type).split(' ').forEach(id => {
-    $(`#${id}`)[ type === 'close' ? 'trigger' : 'triggerHandler'](`${type}.zf.trigger`, [el]);
+    $(`#${id}`, rootNode)[ type === 'close' ? 'trigger' : 'triggerHandler'](`${type}.zf.trigger`, [el]);
   });
 };
 
@@ -41,8 +41,12 @@ Triggers.Listeners.Basic  = {
   },
   toggleListener: function() {
     let id = $(this).data('toggle');
+    let root = $(this)
+    while (root.parent().length) {
+        root = root.parent()
+    }
     if (id) {
-      triggers($(this), 'toggle');
+      triggers($(this), 'toggle', root);
     } else {
       $(this).trigger('toggle.zf.trigger');
     }
@@ -221,8 +225,8 @@ Triggers.Initializers.addMutationEventsListener = function($elem) {
   }
 }
 
-Triggers.Initializers.addSimpleListeners = function() {
-  let $document = $(document);
+Triggers.Initializers.addSimpleListeners = function(rootNode=document) {
+  let $document = $(rootNode);
 
   Triggers.Initializers.addOpenListener($document);
   Triggers.Initializers.addCloseListener($document);
@@ -232,8 +236,8 @@ Triggers.Initializers.addSimpleListeners = function() {
 
 }
 
-Triggers.Initializers.addGlobalListeners = function() {
-  let $document = $(document);
+Triggers.Initializers.addGlobalListeners = function(rootNode=document) {
+  let $document = $(rootNode);
   Triggers.Initializers.addMutationEventsListener($document);
   Triggers.Initializers.addResizeListener(250);
   Triggers.Initializers.addScrollListener();
@@ -241,11 +245,11 @@ Triggers.Initializers.addGlobalListeners = function() {
 }
 
 
-Triggers.init = function (__, Foundation) {
+Triggers.init = function (__, Foundation, rootNode=document) {
   onLoad($(window), function () {
     if ($.triggersInitialized !== true) {
-      Triggers.Initializers.addSimpleListeners();
-      Triggers.Initializers.addGlobalListeners();
+      Triggers.Initializers.addSimpleListeners(rootNode);
+      Triggers.Initializers.addGlobalListeners(rootNode);
       $.triggersInitialized = true;
     }
   });

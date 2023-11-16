@@ -130,7 +130,7 @@ var Foundation = {
    * @param {Object} elem - jQuery object containing the element to check inside. Also checks the element itself, unless it's the `document` object.
    * @param {String|Array} plugins - A list of plugins to initialize. Leave this out to initialize everything.
    */
-  reflow: function(elem, plugins) {
+  reflow: function(elem, plugins, rootNode=document) {
 
     // If plugins is undefined, just grab everything
     if (typeof plugins === 'undefined') {
@@ -156,7 +156,7 @@ var Foundation = {
       // For each plugin found, initialize it
       $elem.each(function() {
         var $el = $(this),
-            opts = { reflow: true };
+            opts = { reflow: true, rootNode };
 
         if($el.attr('data-options')){
           $el.attr('data-options').split(';').forEach(function(option){
@@ -183,7 +183,7 @@ var Foundation = {
      * The Foundation jQuery method.
      * @param {String|Array} method - An action to perform on the current jQuery object.
      */
-    var foundation = function(method) {
+    var foundation = function(method, rootNode=document) {
       var type = typeof method,
           $noJS = $('.no-js');
 
@@ -193,7 +193,7 @@ var Foundation = {
 
       if(type === 'undefined'){//needs to initialize the Foundation object, or an individual plugin.
         MediaQuery._init();
-        Foundation.reflow(this);
+        Foundation.reflow(this, undefined, rootNode);
       }else if(type === 'string'){//an individual method to invoke on a plugin or group of plugins
         var args = Array.prototype.slice.call(arguments, 1);//collect all the arguments, if necessary
         var plugClass = this.data('zfPlugin');//determine the class of plugin
